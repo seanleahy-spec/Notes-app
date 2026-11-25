@@ -1,0 +1,276 @@
+/* ---------- Split view (iPad / desktop) ---------- */
+.notes-split {
+  display: flex;
+  height: 100%;
+}
+
+.notes-split-list {
+  width: 340px;
+  flex-shrink: 0;
+  border-right: 0.5px solid var(--separator);
+}
+
+.notes-split-detail {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+}
+
+/* ---------- List rows ---------- */
+.note-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 16px;
+  min-height: 60px;
+  justify-content: center;
+}
+
+.note-row.selected {
+  background: color-mix(in srgb, var(--accent) 22%, var(--surface));
+}
+
+.note-row-title {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.note-row-detail {
+  display: flex;
+  gap: 8px;
+  font-size: 15px;
+  min-width: 0;
+}
+
+.note-row-date {
+  flex-shrink: 0;
+}
+
+.note-row-preview {
+  color: var(--text-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------- Editor ---------- */
+.note-editor {
+  background: var(--surface);
+}
+
+.note-scroll {
+  padding: 0 20px 40vh;
+}
+
+.note-date {
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-2);
+  margin: 4px 0 12px;
+}
+
+.note-title {
+  display: block;
+  width: 100%;
+  border: none;
+  outline: none;
+  resize: none;
+  background: none;
+  padding: 0;
+  margin: 0 0 8px;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.2;
+  overflow: hidden;
+}
+
+.note-title::placeholder {
+  color: var(--text-3);
+}
+
+.note-body {
+  outline: none;
+  font-size: 17px;
+  line-height: 1.45;
+  min-height: 200px;
+  caret-color: var(--accent);
+}
+
+.note-body > * + * {
+  margin-top: 0.4em;
+}
+
+.note-body p {
+  margin: 0;
+}
+
+.note-body h1 {
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0.6em 0 0.2em;
+}
+
+.note-body h2 {
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0.6em 0 0.2em;
+}
+
+.note-body h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0.5em 0 0.2em;
+}
+
+.note-body ul,
+.note-body ol {
+  padding-left: 1.4em;
+  margin: 0.2em 0;
+}
+
+.note-body li > p {
+  margin: 0;
+}
+
+.note-body a {
+  color: var(--accent-default);
+  text-decoration: underline;
+}
+
+.note-body p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: var(--text-3);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+/* Checklists: round Apple-style checkboxes */
+.note-body ul[data-type='taskList'] {
+  list-style: none;
+  padding-left: 0;
+}
+
+.note-body ul[data-type='taskList'] ul[data-type='taskList'] {
+  padding-left: 1.6em;
+}
+
+.note-body ul[data-type='taskList'] > li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.note-body ul[data-type='taskList'] > li > label {
+  flex-shrink: 0;
+  display: flex;
+  padding-top: 0.15em;
+  user-select: none;
+}
+
+.note-body ul[data-type='taskList'] > li > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.note-body ul[data-type='taskList'] > li input[type='checkbox'] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  border-radius: 50%;
+  border: 1.5px solid var(--text-3);
+  display: grid;
+  place-content: center;
+  cursor: pointer;
+}
+
+.note-body ul[data-type='taskList'] > li input[type='checkbox']:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.note-body ul[data-type='taskList'] > li input[type='checkbox']:checked::after {
+  content: '';
+  width: 6px;
+  height: 11px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: translateY(-1px) rotate(45deg);
+}
+
+.note-body ul[data-type='taskList'] > li[data-checked='true'] > div {
+  color: var(--text-2);
+}
+
+/* ---------- Format toolbar ---------- */
+.format-toolbar {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 44px;
+  padding: 0 4px;
+  background: var(--bar-bg);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-top: 0.5px solid var(--separator);
+}
+
+/* On phones the tab bar is hidden in the editor, so leave room for the home indicator. */
+:root:not(.keyboard-open) .note-editor .format-toolbar {
+  box-sizing: content-box;
+  padding-bottom: var(--safe-bottom);
+}
+
+@media (min-width: 768px) {
+  :root:not(.keyboard-open) .note-editor .format-toolbar {
+    padding-bottom: 0;
+  }
+}
+
+.tool-button {
+  width: 40px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+}
+
+.tool-button.active {
+  background: var(--fill-strong);
+}
+
+.tool-text {
+  font-size: 17px;
+  line-height: 1;
+}
+
+.tool-h1 {
+  font-weight: 700;
+}
+
+.tool-h2 {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.tool-bold {
+  font-weight: 800;
+  font-size: 19px;
+}
+
+.tool-italic {
+  font-style: italic;
+  font-family: Georgia, serif;
+  font-size: 19px;
+}
