@@ -1,10 +1,10 @@
-import { Suspense, useCallback, useMemo, useState } from 'react'
+import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import { HashRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { DialogProvider } from '../components/dialogs'
 import SettingsPage from '../features/settings/SettingsPage'
 import { ShellContext } from './shell'
 import { TabBar } from './TabBar'
-import { defaultTab, tabForPath, tabs } from './tabs'
+import { rememberTab, startTab, tabForPath, tabs } from './tabs'
 import { useVisualViewport } from './viewport'
 
 function Shell() {
@@ -19,6 +19,9 @@ function Shell() {
   const shellApi = useMemo(() => ({ hideTabBar }), [hideTabBar])
 
   const activeTab = tabForPath(location.pathname)
+  useEffect(() => {
+    if (activeTab) rememberTab(activeTab)
+  }, [activeTab])
   const showTabBar = hideRequests === 0 && !keyboardOpen
 
   return (
@@ -35,7 +38,7 @@ function Shell() {
                 return <Route key={tab.id} path={`${tab.path}/*`} element={<Component />} />
               })}
               <Route path="/settings" element={<SettingsPage />} />
-              <Route path="*" element={<Navigate to={defaultTab.path} replace />} />
+              <Route path="*" element={<Navigate to={startTab().path} replace />} />
             </Routes>
           </Suspense>
         </main>

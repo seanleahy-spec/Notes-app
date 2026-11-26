@@ -15,7 +15,7 @@ const snap = async (page, name) => shots && page.screenshot({ path: `${shots}/${
   const page = await ctx.newPage()
   const errors = []
   page.on('pageerror', (e) => errors.push(e.message))
-  await page.goto(URL)
+  await page.goto(URL + '#/notes')
   await page.getByRole('heading', { name: 'Notes' }).waitFor()
   assert.equal(await page.locator('.tab-bar-item').allInnerTexts().then((t) => t.join(',')), 'Calendar,Whiteboards,Notes')
   await page.getByText('No Notes').waitFor()
@@ -136,7 +136,7 @@ const snap = async (page, name) => shots && page.screenshot({ path: `${shots}/${
 
   // Other tabs exist
   await page.getByRole('link', { name: 'Calendar' }).click()
-  await page.getByText('Coming soon').waitFor()
+  await page.getByRole('button', { name: 'New event' }).waitFor()
   await page.getByRole('link', { name: 'Notes' }).click()
 
   // Dark mode screenshot
@@ -152,7 +152,7 @@ const snap = async (page, name) => shots && page.screenshot({ path: `${shots}/${
   // ---------- iPad (landscape) ----------
   const ipad = await browser.newContext({ ...devices['iPad Pro 11 landscape'] })
   const p2 = await ipad.newPage()
-  await p2.goto(URL)
+  await p2.goto(URL + '#/notes')
   await p2.getByText('No note selected').waitFor()
   await p2.getByRole('button', { name: 'New note' }).click()
   await p2.getByLabel('Note title').fill('iPad note')

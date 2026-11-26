@@ -49,8 +49,27 @@ export const tabs: TabDefinition[] = [
   },
 ]
 
-/** Tab shown when the app opens with no specific location. */
-export const defaultTab = tabs.find((t) => t.id === 'notes') ?? tabs[0]
+const LAST_TAB_KEY = 'app.lastTab'
+
+/** Tab shown when the app opens with no specific location: the last one used. */
+export function startTab(): TabDefinition {
+  try {
+    const id = localStorage.getItem(LAST_TAB_KEY)
+    const tab = tabs.find((t) => t.id === id)
+    if (tab) return tab
+  } catch {
+    /* storage unavailable */
+  }
+  return tabs[0]
+}
+
+export function rememberTab(tab: TabDefinition) {
+  try {
+    localStorage.setItem(LAST_TAB_KEY, tab.id)
+  } catch {
+    /* ignore */
+  }
+}
 
 export function tabForPath(pathname: string): TabDefinition | undefined {
   return tabs.find((t) => pathname === t.path || pathname.startsWith(t.path + '/'))

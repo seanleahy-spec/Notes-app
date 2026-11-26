@@ -20,13 +20,32 @@ export interface Note {
   updatedAt: number
 }
 
+export interface CalendarEvent {
+  id: string
+  title: string
+  /** Local calendar date, 'yyyy-MM-dd'. */
+  date: string
+  allDay: boolean
+  /** 'HH:mm' (24h). Ignored when allDay. */
+  startTime: string
+  /** 'HH:mm' (24h), after startTime. Ignored when allDay. */
+  endTime: string
+  notes: string
+  createdAt: number
+  updatedAt: number
+}
+
 class AppDatabase extends Dexie {
   notes!: EntityTable<Note, 'id'>
+  events!: EntityTable<CalendarEvent, 'id'>
 
   constructor() {
     super('my-productivity')
     this.version(1).stores({
       notes: 'id, updatedAt',
+    })
+    this.version(2).stores({
+      events: 'id, date',
     })
   }
 }
