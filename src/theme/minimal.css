@@ -1,0 +1,53 @@
+/*
+ * Minimal theme (shared): paper in light mode, charcoal in dark mode.
+ * Add class "theme-minimal" to a page to use it.
+ */
+@import '@fontsource/jost/latin-300.css';
+@import '@fontsource/jost/latin-400.css';
+@import '@fontsource/jost/latin-500.css';
+
+.theme-minimal {
+  --min-font: 'Jost', -apple-system, system-ui, sans-serif;
+  --bg: #f3eeeb;
+  --surface: #f3eeeb;
+  --surface-2: #ebe5e1;
+  --text: #13232b;
+  --text-2: rgba(19, 35, 43, 0.55);
+  --text-3: rgba(19, 35, 43, 0.28);
+  --separator: rgba(19, 35, 43, 0.2);
+  --fill: rgba(19, 35, 43, 0.06);
+  --fill-strong: rgba(19, 35, 43, 0.12);
+  --bar-bg: #f3eeeb;
+  --accent: #13232b;
+  --min-strong: #13232b;
+  color-scheme: light;
+  font-family: var(--min-font);
+  font-weight: 300;
+  background: var(--bg);
+  color: var(--text);
+}
+
+@media (prefers-color-scheme: dark) {
+  .theme-minimal {
+    --bg: #2e2e2e;
+    --surface: #2e2e2e;
+    --surface-2: #363636;
+    --text: #ecebe8;
+    --text-2: rgba(236, 235, 232, 0.55);
+    --text-3: rgba(236, 235, 232, 0.26);
+    --separator: rgba(236, 235, 232, 0.22);
+    --fill: rgba(236, 235, 232, 0.07);
+    --fill-strong: rgba(236, 235, 232, 0.14);
+    --bar-bg: #2e2e2e;
+    --accent: #ecebe8;
+    --min-strong: #ecebe8;
+    color-scheme: dark;
+  }
+}
+
+.theme-minimal button,
+.theme-minimal input,
+.theme-minimal select,
+.theme-minimal textarea {
+  font-family: var(--min-font);
+}

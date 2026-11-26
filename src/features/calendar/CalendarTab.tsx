@@ -6,9 +6,6 @@ import { NavBar } from '../../components/NavBar'
 import { SegmentedControl } from '../../components/SegmentedControl'
 import { useIsWide } from '../../hooks/useMediaQuery'
 import { useSwipe } from '../../hooks/useSwipe'
-import '@fontsource/jost/latin-300.css'
-import '@fontsource/jost/latin-400.css'
-import '@fontsource/jost/latin-500.css'
 import './calendar.css'
 import './calendar-theme.css'
 import { fmt, fromKey, fromMinutes, toKey, todayKey, WEEK_OPTS } from './dates'
@@ -104,7 +101,7 @@ export default function CalendarTab() {
   const nextLabel = `Next ${view}`
 
   return (
-    <div className="page calendar-page cal-theme">
+    <div className="page calendar-page theme-minimal cal-theme">
       <NavBar
         left={
           <button type="button" className="text-button" onClick={() => go({ date: new Date() })}>

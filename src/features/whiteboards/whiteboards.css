@@ -1,0 +1,429 @@
+/* Whiteboards: minimal style (colours/typeface from .theme-minimal). */
+
+.theme-minimal .nav-bar .icon-button,
+.wb-board .icon-button {
+  color: var(--text);
+}
+
+.theme-minimal .icon-button svg {
+  stroke-width: 1.3;
+}
+
+/* ---------- List ---------- */
+.wb-list-title {
+  font-size: 21px;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin: 10px 4px 22px;
+}
+
+.wb-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 22px 16px;
+}
+
+@media (min-width: 768px) {
+  .wb-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  }
+}
+
+.wb-card {
+  min-width: 0;
+}
+
+.wb-card-link {
+  display: block;
+}
+
+.wb-preview {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  border: 0.5px solid var(--separator);
+  background: var(--surface-2);
+  pointer-events: none;
+}
+
+.wb-card-meta {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 4px;
+  padding-top: 8px;
+}
+
+.wb-card-meta .icon-button {
+  min-width: 32px;
+  height: 32px;
+  margin-top: -4px;
+}
+
+.wb-card-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.wb-card-name {
+  font-size: 15px;
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wb-card-date {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+
+.wb-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 60px 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+.wb-empty p {
+  margin: 0;
+}
+
+.wb-empty-button {
+  color: var(--text);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 10px 16px;
+  border: 0.5px solid var(--separator);
+}
+
+/* ---------- Board ---------- */
+.wb-board {
+  position: relative;
+}
+
+.wb-topbar {
+  flex-shrink: 0;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  height: 48px;
+  padding: var(--safe-top) 8px 0;
+  box-sizing: content-box;
+  border-bottom: 0.5px solid var(--separator);
+  background: var(--bg);
+  position: relative;
+  z-index: 5;
+}
+
+.wb-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 44px;
+  padding: 0 6px;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  justify-self: start;
+}
+
+.wb-title {
+  font-size: 15px;
+  font-weight: 400;
+  max-width: 44vw;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 6px 8px;
+}
+
+.wb-topbar-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.wb-topbar-right .icon-button {
+  min-width: 38px;
+}
+
+.wb-zoom {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--text-2);
+  min-width: 44px;
+  height: 44px;
+  font-variant-numeric: tabular-nums;
+}
+
+.wb-viewport {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  background-color: var(--bg);
+  background-image: radial-gradient(circle, var(--text-3) 0.8px, transparent 1.1px);
+  cursor: default;
+}
+
+.wb-viewport.tool-pen,
+.wb-viewport.tool-shape,
+.wb-viewport.tool-arrow {
+  cursor: crosshair;
+}
+
+.wb-viewport.tool-text {
+  cursor: text;
+}
+
+.wb-world {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  transform-origin: 0 0;
+}
+
+.wb-hint {
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  transform: translate(-50%, -50%);
+  width: min(320px, 80%);
+  margin: 0;
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  line-height: 1.8;
+  color: var(--text-3);
+  pointer-events: none;
+}
+
+/* ---------- Elements ---------- */
+.wb-el {
+  position: absolute;
+}
+
+.wb-passthrough {
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.wb-svg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: visible;
+}
+
+.wb-hit {
+  fill: none;
+  stroke: transparent;
+  stroke-width: calc(22px / var(--zoom, 1));
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: stroke;
+}
+
+.wb-draft {
+  pointer-events: none;
+}
+
+.wb-text {
+  font-family: var(--min-font);
+  font-weight: 400;
+  line-height: 1.3;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.wb-sticky {
+  padding: 0.9em;
+  color: #222;
+  font-family: var(--min-font);
+  font-weight: 400;
+  line-height: 1.3;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.12),
+    0 8px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.wb-sticky-text {
+  display: block;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.wb-textarea {
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  resize: none;
+  overflow: hidden;
+  font: inherit;
+  line-height: inherit;
+  color: inherit;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.wb-textarea::placeholder {
+  color: currentColor;
+  opacity: 0.35;
+}
+
+/* ---------- Selection ---------- */
+.wb-selection {
+  position: absolute;
+  outline: calc(1px / var(--zoom, 1)) solid var(--text);
+  outline-offset: calc(3px / var(--zoom, 1));
+  pointer-events: none;
+}
+
+.wb-handle {
+  position: absolute;
+  width: calc(11px / var(--zoom, 1));
+  height: calc(11px / var(--zoom, 1));
+  transform: translate(-50%, -50%);
+  background: var(--bg);
+  border: calc(1px / var(--zoom, 1)) solid var(--text);
+  z-index: 2;
+}
+
+.wb-handle.round {
+  border-radius: 50%;
+}
+
+/* Bigger invisible touch target */
+.wb-handle::before {
+  content: '';
+  position: absolute;
+  inset: calc(-14px / var(--zoom, 1));
+}
+
+/* ---------- Floating toolbars ---------- */
+.wb-toolbar,
+.wb-options {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 5px;
+  background: var(--bg);
+  border: 0.5px solid var(--separator);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+  z-index: 6;
+  max-width: calc(100% - 20px);
+}
+
+.wb-toolbar {
+  bottom: calc(14px + var(--safe-bottom));
+  border-radius: 14px;
+}
+
+.wb-options {
+  bottom: calc(76px + var(--safe-bottom));
+  border-radius: 12px;
+  overflow-x: auto;
+  padding: 6px 8px;
+  gap: 6px;
+}
+
+:root.keyboard-open .wb-toolbar {
+  bottom: 10px;
+}
+
+:root.keyboard-open .wb-options {
+  bottom: 72px;
+}
+
+.wb-tool,
+.wb-opt {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  color: var(--text-2);
+}
+
+.wb-opt {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  color: var(--text);
+}
+
+.wb-tool svg,
+.wb-opt svg {
+  stroke-width: 1.4;
+}
+
+.wb-tool.on {
+  color: var(--bg);
+  background: var(--text);
+}
+
+.wb-opt.on {
+  background: var(--fill-strong);
+}
+
+.wb-divider {
+  width: 0.5px;
+  align-self: stretch;
+  margin: 6px 4px;
+  background: var(--separator);
+  flex-shrink: 0;
+}
+
+.wb-swatch {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.2);
+}
+
+.wb-swatch.on {
+  box-shadow:
+    0 0 0 2px var(--bg),
+    0 0 0 3px var(--text);
+}
+
+@media (max-width: 380px) {
+  .wb-tool {
+    width: 36px;
+  }
+}

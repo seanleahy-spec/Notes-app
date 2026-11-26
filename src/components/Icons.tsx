@@ -144,3 +144,88 @@ export const RepeatIcon = (p: IconProps) => (
     <path d="M4 11V9a3 3 0 0 1 3-3h12M16 3l3 3-3 3M20 13v2a3 3 0 0 1-3 3H5M8 21l-3-3 3-3" />
   </Svg>
 )
+
+// ---------- Whiteboard tools ----------
+export const CursorIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M6 3.5 18.5 12l-5.6 1.4L10.4 19z" />
+  </Svg>
+)
+
+export const PenIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M15.5 4.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4z" />
+    <path d="m13.5 6.5 3 3" />
+  </Svg>
+)
+
+export const TextIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M5 6V4.5h14V6M12 4.5v15M9 19.5h6" />
+  </Svg>
+)
+
+export const StickyIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M4.5 4.5h15v10l-5 5h-10z" />
+    <path d="M19.5 14.5h-5v5" />
+  </Svg>
+)
+
+export const ShapesIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <rect x="3.5" y="3.5" width="9.5" height="9.5" rx="1" />
+    <circle cx="15.5" cy="15.5" r="5" />
+  </Svg>
+)
+
+export const RectIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <rect x="4" y="6" width="16" height="12" rx="1" />
+  </Svg>
+)
+
+export const EllipseIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <ellipse cx="12" cy="12" rx="8.5" ry="6.5" />
+  </Svg>
+)
+
+export const DiamondIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M12 3.5 20.5 12 12 20.5 3.5 12z" />
+  </Svg>
+)
+
+export const ArrowToolIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M5 19 19 5M10 5h9v9" />
+  </Svg>
+)
+
+export const UndoIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M9 14 4 9l5-5" />
+    <path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11" />
+  </Svg>
+)
+
+export const RedoIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="m15 14 5-5-5-5" />
+    <path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13" />
+  </Svg>
+)
+
+export const DuplicateIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <rect x="8" y="8" width="12" height="12" rx="1.5" />
+    <path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-9A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8" />
+  </Svg>
+)
+
+export const FitIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5" />
+  </Svg>
+)

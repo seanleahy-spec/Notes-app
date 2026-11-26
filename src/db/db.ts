@@ -1,4 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie'
+import type { SavedViewport, WbElement } from '../features/whiteboards/types'
 
 /**
  * Single on-device database (IndexedDB) for the whole app.
@@ -52,9 +53,19 @@ export interface CalendarEvent {
   updatedAt: number
 }
 
+export interface Whiteboard {
+  id: string
+  name: string
+  elements: WbElement[]
+  viewport: SavedViewport | null
+  createdAt: number
+  updatedAt: number
+}
+
 class AppDatabase extends Dexie {
   notes!: EntityTable<Note, 'id'>
   events!: EntityTable<CalendarEvent, 'id'>
+  whiteboards!: EntityTable<Whiteboard, 'id'>
 
   constructor() {
     super('my-productivity')
@@ -66,6 +77,9 @@ class AppDatabase extends Dexie {
     })
     this.version(3).stores({
       events: 'id, date, repeats',
+    })
+    this.version(4).stores({
+      whiteboards: 'id, updatedAt',
     })
   }
 }
