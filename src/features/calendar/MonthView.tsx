@@ -33,7 +33,7 @@ export function MonthView({
     <div className={'month-view' + (wide ? ' wide' : '')}>
       <div className="month-weekdays" aria-hidden="true">
         {WEEKDAYS.map((d) => (
-          <span key={d}>{wide ? d : d[0]}</span>
+          <span key={d}>{d}</span>
         ))}
       </div>
       <div className="month-grid" role="grid" aria-label={fmt(date, 'MMMM yyyy')} style={{ gridTemplateRows: `repeat(${weeks}, 1fr)` }}>

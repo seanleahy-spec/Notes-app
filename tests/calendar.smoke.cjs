@@ -23,7 +23,7 @@ const NOW = new Date('2026-11-26T10:30:00') // a Thursday
   await page.goto(URL + '#/calendar')
   await page.locator('.calendar-title').waitFor()
   await expectTitle('November 2026')
-  assert.equal(await page.locator('.month-weekdays span').first().innerText(), 'M', 'week starts Monday')
+  assert.equal(await page.locator('.month-weekdays span').first().innerText(), 'MON', 'week starts Monday')
   assert.equal(await page.locator('.month-cell.today.selected .month-day-number').innerText(), '26')
   await page.getByText('No Events').waitFor()
 
@@ -38,7 +38,7 @@ const NOW = new Date('2026-11-26T10:30:00') // a Thursday
   await snap(page, '10-cal-new-event')
   await sheet.getByRole('button', { name: 'Add' }).click()
   await page.locator('.event-row', { hasText: 'Dentist' }).waitFor()
-  assert.match(await page.locator('.event-row-time').innerText(), /11 am – 12 pm/)
+  assert.match(await page.locator('.event-row-time').innerText(), /11 am – 12 pm/i)
   assert.equal(await page.locator('.month-cell.today .month-dots i').count(), 1)
 
   // --- Validation: end before start
@@ -60,7 +60,7 @@ const NOW = new Date('2026-11-26T10:30:00') // a Thursday
   await sheet.getByRole('button', { name: 'Add' }).click()
   await page.locator('.event-row', { hasText: 'Long weekend' }).waitFor()
   assert.equal(await page.locator('.month-cell.selected .month-day-number').innerText(), '28')
-  assert.match(await page.locator('.event-row-time').innerText(), /All day/)
+  assert.match(await page.locator('.event-row-time').innerText(), /All day/i)
 
   // --- Edit
   await page.getByRole('gridcell', { name: /^Thursday 26 November/ }).click()

@@ -100,7 +100,7 @@ function TimeGrid({
 
       {hasAllDay && (
         <div className="time-grid-allday">
-          <div className="time-gutter">all-day</div>
+          <div className="time-gutter">all day</div>
           {keys.map((key) => (
             <div key={key} className="time-grid-allday-cell">
               {(byDate.get(key) ?? [])
