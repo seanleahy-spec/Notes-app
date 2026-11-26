@@ -1,3 +1,4 @@
+import { addDays, differenceInCalendarDays } from 'date-fns'
 import { useState } from 'react'
 import { useDialogs } from '../../components/dialogs'
 import { XCircleFillIcon } from '../../components/Icons'
@@ -5,7 +6,7 @@ import { Sheet } from '../../components/Sheet'
 import { Switch } from '../../components/Switch'
 import type { Recurrence } from '../../db/db'
 import { colorVar, DEFAULT_EVENT_COLOR, EVENT_COLORS } from './colors'
-import { fmt, fromKey, fromMinutes, toMinutes } from './dates'
+import { fmt, fromKey, fromMinutes, toKey, toMinutes } from './dates'
 import {
   createEvent,
   deleteEvent,
@@ -30,6 +31,27 @@ const WEEKDAY_TOGGLES = [
 ]
 
 type RepeatKind = 'never' | 'weekly' | 'dates'
+
+const MAX_RANGE_DAYS = 366
+
+/** Groups sorted 'yyyy-MM-dd' dates into runs of consecutive days. */
+function toRuns(dates: string[]): { start: string; end: string; dates: string[] }[] {
+  const runs: { start: string; end: string; dates: string[] }[] = []
+  for (const d of [...dates].sort()) {
+    const last = runs[runs.length - 1]
+    if (last && differenceInCalendarDays(fromKey(d), fromKey(last.end)) === 1) {
+      last.end = d
+      last.dates.push(d)
+    } else runs.push({ start: d, end: d, dates: [d] })
+  }
+  return runs
+}
+
+function runLabel(run: { start: string; end: string }): string {
+  if (run.start === run.end) return fmt(fromKey(run.start), 'EEE d MMMM yyyy')
+  const sameYear = run.start.slice(0, 4) === run.end.slice(0, 4)
+  return `${fmt(fromKey(run.start), sameYear ? 'EEE d MMM' : 'EEE d MMM yyyy')} – ${fmt(fromKey(run.end), 'EEE d MMM yyyy')}`
+}
 
 /** Add / edit / delete an event (including repeating events). */
 export function EventEditor({
@@ -59,7 +81,8 @@ export function EventEditor({
         }
       : initial!,
   )
-  const [newDate, setNewDate] = useState('')
+  const [rangeFrom, setRangeFrom] = useState('')
+  const [rangeTo, setRangeTo] = useState('')
   const [saving, setSaving] = useState(false)
   const error = isValidDraft(draft)
   const set = (patch: Partial<EventDraft>) => setDraft((d) => ({ ...d, ...patch }))
@@ -87,15 +110,23 @@ export function EventEditor({
     setRecurrence({ ...r, weekdays })
   }
 
-  const addDate = (date: string) => {
-    if (r?.kind !== 'dates' || !date) return
-    setRecurrence({ kind: 'dates', dates: [...new Set([...r.dates, date])].sort() })
-    setNewDate('')
+  /** Adds one date, or every date from `rangeFrom` to `rangeTo`. */
+  const addDates = () => {
+    if (r?.kind !== 'dates' || !rangeFrom) return
+    let start = fromKey(rangeFrom)
+    let end = fromKey(rangeTo || rangeFrom)
+    if (end < start) [start, end] = [end, start]
+    const count = Math.min(differenceInCalendarDays(end, start) + 1, MAX_RANGE_DAYS)
+    const added = Array.from({ length: count }, (_, i) => toKey(addDays(start, i)))
+    setRecurrence({ kind: 'dates', dates: [...new Set([...r.dates, ...added])].sort() })
+    setRangeFrom('')
+    setRangeTo('')
   }
 
-  const removeDate = (date: string) => {
+  const removeDates = (dates: string[]) => {
     if (r?.kind !== 'dates') return
-    setRecurrence({ kind: 'dates', dates: r.dates.filter((d) => d !== date) })
+    const drop = new Set(dates)
+    setRecurrence({ kind: 'dates', dates: r.dates.filter((d) => !drop.has(d)) })
   }
 
   const save = async () => {
@@ -307,28 +338,44 @@ export function EventEditor({
 
           {r?.kind === 'dates' && (
             <>
-              {r.dates.map((d) => (
-                <li key={d} className="form-row">
-                  <span>{fmt(fromKey(d), 'EEE d MMMM yyyy')}</span>
+              {toRuns(r.dates).map((run) => (
+                <li key={run.start} className="form-row">
+                  <span>{runLabel(run)}</span>
                   <button
                     type="button"
                     className="clear-button"
-                    aria-label={`Remove ${fmt(fromKey(d), 'd MMMM yyyy')}`}
-                    onClick={() => removeDate(d)}
+                    aria-label={`Remove ${runLabel(run)}`}
+                    onClick={() => removeDates(run.dates)}
                   >
                     <XCircleFillIcon size={20} />
                   </button>
                 </li>
               ))}
               <li className="form-row">
-                <label htmlFor="ev-add-date">Add Date</label>
+                <label htmlFor="ev-from">From</label>
                 <input
-                  id="ev-add-date"
+                  id="ev-from"
                   type="date"
                   className="form-pill"
-                  value={newDate}
-                  onChange={(e) => addDate(e.target.value)}
+                  value={rangeFrom}
+                  onChange={(e) => setRangeFrom(e.target.value)}
                 />
+              </li>
+              <li className="form-row">
+                <label htmlFor="ev-to">To (optional)</label>
+                <input
+                  id="ev-to"
+                  type="date"
+                  className="form-pill"
+                  value={rangeTo}
+                  min={rangeFrom || undefined}
+                  onChange={(e) => setRangeTo(e.target.value)}
+                />
+              </li>
+              <li>
+                <button type="button" className="list-button centered add-dates" disabled={!rangeFrom} onClick={addDates}>
+                  {rangeTo && rangeTo !== rangeFrom ? 'Add These Dates' : 'Add Date'}
+                </button>
               </li>
             </>
           )}

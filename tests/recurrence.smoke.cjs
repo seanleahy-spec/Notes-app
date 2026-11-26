@@ -34,7 +34,7 @@ const NOW = new Date('2026-11-26T10:30:00') // Thursday
     await page.getByLabel('Title').fill(title)
   }
   const add = async () => {
-    await sheet.getByRole('button', { name: 'Add' }).click()
+    await sheet.getByRole('button', { name: 'Add', exact: true }).click()
     await sheet.waitFor({ state: 'detached' })
   }
 
@@ -76,8 +76,11 @@ const NOW = new Date('2026-11-26T10:30:00') // Thursday
   await showDay('2026-11-26')
   await newEvent('Exam')
   await page.getByLabel('Repeat', { exact: true }).selectOption('dates')
-  await page.getByRole('button', { name: 'Remove 26 November 2026' }).click()
-  for (const d of ['2026-12-10', '2026-12-03', '2026-12-19']) await page.locator('#ev-add-date').fill(d)
+  await page.getByRole('button', { name: /Remove .*26 November 2026/ }).click()
+  for (const d of ['2026-12-10', '2026-12-03', '2026-12-19']) {
+    await page.locator('#ev-from').fill(d)
+    await page.getByRole('button', { name: 'Add Date', exact: true }).click()
+  }
   await page.getByText('On 3 dates').waitFor()
   await page.getByRole('radio', { name: 'Green' }).click()
   await snap(page, '21-repeat-dates-form')
@@ -85,6 +88,33 @@ const NOW = new Date('2026-11-26T10:30:00') // Thursday
   for (const d of ['2026-12-03', '2026-12-10', '2026-12-19']) assert.ok((await eventsOn(d)).includes('Exam'), d)
   assert.ok(!(await eventsOn('2026-12-04')).includes('Exam'))
   assert.ok(!(await eventsOn('2026-11-26')).includes('Exam'))
+
+  // --- Specific dates with a start and end date (range)
+  await newEvent('Holiday')
+  await page.getByLabel('Repeat', { exact: true }).selectOption('dates')
+  await page.getByRole('button', { name: /^Remove / }).click()
+  await page.locator('#ev-from').fill('2026-12-21')
+  await page.locator('#ev-to').fill('2026-12-24')
+  await page.getByRole('button', { name: 'Add These Dates' }).click()
+  await page.getByText('Mon 21 Dec – Thu 24 Dec 2026').waitFor()
+  await page.locator('#ev-from').fill('2026-12-31')
+  await page.getByRole('button', { name: 'Add Date', exact: true }).click()
+  await page.getByText('On 5 dates').waitFor()
+  await page.waitForTimeout(300)
+  await snap(page, '25-dates-range-form')
+  await add()
+  for (const d of ['2026-12-21', '2026-12-22', '2026-12-24', '2026-12-31']) assert.ok((await eventsOn(d)).includes('Holiday'), d)
+  assert.ok(!(await eventsOn('2026-12-25')).includes('Holiday'))
+  // Remove the whole range in one tap
+  await showDay('2026-12-31')
+  await page.locator('.time-event', { hasText: 'Holiday' }).click()
+  await page.getByRole('button', { name: 'Remove Mon 21 Dec – Thu 24 Dec 2026' }).click()
+  await page.getByText('On 1 date').waitFor()
+  await sheet.getByRole('button', { name: 'Done' }).click()
+  await alert.getByRole('button', { name: 'Save for All Events' }).click()
+  await sheet.waitFor({ state: 'detached' })
+  assert.ok(!(await eventsOn('2026-12-22')).includes('Holiday'))
+  assert.ok((await eventsOn('2026-12-31')).includes('Holiday'))
 
   // --- Month view shows coloured dots and the repeat icon
   await page.goto(URL + '#/calendar?view=month&date=2026-12-02')

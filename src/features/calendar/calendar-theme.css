@@ -492,3 +492,57 @@
   white-space: normal;
   padding: 6px 2px 0;
 }
+
+/* ---------- Revision 2 ---------- */
+
+/* Month (phone): soft dotted lines for events */
+.cal-theme .month-dots i {
+  height: 0;
+  border-radius: 0;
+  background: none;
+  border-top: 2px dotted var(--event-color, var(--ev-red));
+  opacity: 0.75;
+}
+
+/* Selected day = outlined number; today = small filled circle */
+.cal-theme .month-cell.selected {
+  background: none;
+}
+
+.cal-theme .month-cell.selected .month-day-number {
+  background: none;
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px var(--text);
+  font-weight: 500;
+}
+
+.cal-theme .month-cell.today .month-day-number,
+.cal-theme .month-cell.today.selected .month-day-number {
+  background: var(--text);
+  color: var(--bg);
+  box-shadow: none;
+  font-weight: 500;
+}
+
+/* Week strip / week header: same rule */
+.cal-theme .week-strip-day.selected .week-strip-number {
+  background: none;
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px var(--text);
+}
+
+.cal-theme .week-strip-day.today .week-strip-number,
+.cal-theme .week-strip-day.selected.today .week-strip-number,
+.cal-theme .time-grid-day-header.today .week-strip-number {
+  background: var(--text);
+  color: var(--bg);
+  box-shadow: none;
+}
+
+.cal-theme .list-button.add-dates {
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 11px;
+  font-weight: 400;
+}
