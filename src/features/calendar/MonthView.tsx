@@ -1,7 +1,8 @@
 import { isSameMonth } from 'date-fns'
-import type { CalendarEvent } from '../../db/db'
+import { RepeatIcon } from '../../components/Icons'
+import { eventColorStyle } from './colors'
 import { displayTime, fmt, fromKey, monthGridDays, toKey, todayKey } from './dates'
-import { groupByDate, timeRangeLabel, useEventsBetween } from './eventsRepo'
+import { groupByDate, timeRangeLabel, useEventsBetween, type Occurrence } from './eventsRepo'
 
 const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
@@ -19,7 +20,7 @@ export function MonthView({
   wide: boolean
   onSelect: (d: Date) => void
   onOpenDay: (d: Date) => void
-  onOpenEvent: (e: CalendarEvent) => void
+  onOpenEvent: (e: Occurrence) => void
   onNewOnDay: (d: Date) => void
 }) {
   const days = monthGridDays(date)
@@ -60,9 +61,10 @@ export function MonthView({
                 <div className="month-cell-events">
                   {dayEvents.slice(0, 3).map((e) => (
                     <button
-                      key={e.id}
+                      key={e.key}
                       type="button"
                       className={'month-chip' + (e.allDay ? ' all-day' : '')}
+                      style={eventColorStyle(e.color)}
                       onClick={(ev) => {
                         ev.stopPropagation()
                         onOpenEvent(e)
@@ -77,7 +79,7 @@ export function MonthView({
               ) : (
                 <span className="month-dots" aria-hidden="true">
                   {dayEvents.slice(0, 3).map((e) => (
-                    <i key={e.id} />
+                    <i key={e.key} style={eventColorStyle(e.color)} />
                   ))}
                 </span>
               )}
@@ -102,8 +104,8 @@ export function DayEventList({
   onOpenEvent,
 }: {
   dateKey: string
-  events: CalendarEvent[]
-  onOpenEvent: (e: CalendarEvent) => void
+  events: Occurrence[]
+  onOpenEvent: (e: Occurrence) => void
 }) {
   return (
     <section className="day-event-list" aria-label={`Events on ${fmt(fromKey(dateKey), 'd MMMM')}`}>
@@ -113,14 +115,17 @@ export function DayEventList({
       ) : (
         <ul>
           {events.map((e) => (
-            <li key={e.id}>
-              <button type="button" className="event-row" onClick={() => onOpenEvent(e)}>
+            <li key={e.key}>
+              <button type="button" className="event-row" style={eventColorStyle(e.color)} onClick={() => onOpenEvent(e)}>
                 <span className="event-row-bar" />
                 <span className="event-row-main">
                   <span className="event-row-title">{e.title}</span>
                   {e.notes && <span className="event-row-notes">{e.notes}</span>}
                 </span>
-                <span className="event-row-time">{timeRangeLabel(e)}</span>
+                <span className="event-row-time">
+                  {e.repeating && <RepeatIcon size={13} aria-label="Repeating" />}
+                  {timeRangeLabel(e)}
+                </span>
               </button>
             </li>
           ))}

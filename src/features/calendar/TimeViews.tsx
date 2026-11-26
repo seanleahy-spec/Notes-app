@@ -1,14 +1,14 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import type { CalendarEvent } from '../../db/db'
+import { eventColorStyle } from './colors'
 import { displayTime, fmt, hourLabel, toKey, todayKey, toMinutes, weekDays } from './dates'
-import { groupByDate, useEventsBetween } from './eventsRepo'
+import { groupByDate, useEventsBetween, type Occurrence } from './eventsRepo'
 
 const HOUR_HEIGHT = 52
 const MIN_EVENT_HEIGHT = 22
 
 interface TimeViewProps {
   date: Date
-  onOpenEvent: (e: CalendarEvent) => void
+  onOpenEvent: (e: Occurrence) => void
   onSlot: (day: Date, minutes: number) => void
 }
 
@@ -55,7 +55,7 @@ function TimeGrid({
   onHeaderTap,
 }: {
   days: Date[]
-  onOpenEvent: (e: CalendarEvent) => void
+  onOpenEvent: (e: Occurrence) => void
   onSlot: (day: Date, minutes: number) => void
   onHeaderTap?: (d: Date) => void
 }) {
@@ -106,7 +106,7 @@ function TimeGrid({
               {(byDate.get(key) ?? [])
                 .filter((e) => e.allDay)
                 .map((e) => (
-                  <button key={e.id} type="button" className="event-chip" onClick={() => onOpenEvent(e)}>
+                  <button key={e.key} type="button" className="event-chip" style={eventColorStyle(e.color)} onClick={() => onOpenEvent(e)}>
                     {e.title}
                   </button>
                 ))}
@@ -144,10 +144,11 @@ function TimeGrid({
                   const height = Math.max(MIN_EVENT_HEIGHT, ((end - start) / 60) * HOUR_HEIGHT - 2)
                   return (
                     <button
-                      key={e.id}
+                      key={e.key}
                       type="button"
                       className={'time-event' + (height < 40 ? ' compact' : '')}
                       style={{
+                        ...eventColorStyle(e.color),
                         top: (start / 60) * HOUR_HEIGHT + 1,
                         height,
                         left: `calc(${(col / cols) * 100}% + 1px)`,
@@ -189,12 +190,12 @@ function useNowMinutes(): number {
 }
 
 /** Places overlapping events side by side. */
-function layoutColumns(events: CalendarEvent[]): { event: CalendarEvent; col: number; cols: number }[] {
+function layoutColumns(events: Occurrence[]): { event: Occurrence; col: number; cols: number }[] {
   const sorted = [...events].sort(
     (a, b) => toMinutes(a.startTime) - toMinutes(b.startTime) || toMinutes(b.endTime) - toMinutes(a.endTime),
   )
-  const out: { event: CalendarEvent; col: number; cols: number }[] = []
-  let cluster: { event: CalendarEvent; col: number; cols: number }[] = []
+  const out: { event: Occurrence; col: number; cols: number }[] = []
+  let cluster: { event: Occurrence; col: number; cols: number }[] = []
   let colEnds: number[] = []
   let clusterEnd = -1
 

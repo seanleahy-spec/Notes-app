@@ -4,13 +4,13 @@ import { useSearchParams } from 'react-router-dom'
 import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from '../../components/Icons'
 import { NavBar } from '../../components/NavBar'
 import { SegmentedControl } from '../../components/SegmentedControl'
-import type { CalendarEvent } from '../../db/db'
 import { useIsWide } from '../../hooks/useMediaQuery'
 import { useSwipe } from '../../hooks/useSwipe'
 import './calendar.css'
 import { fmt, fromKey, fromMinutes, toKey, todayKey, WEEK_OPTS } from './dates'
 import { EventEditor } from './EventEditor'
-import type { EventDraft } from './eventsRepo'
+import type { EventDraft, Occurrence } from './eventsRepo'
+import { DEFAULT_EVENT_COLOR } from './colors'
 import { MonthView } from './MonthView'
 import { DayView, WeekView } from './TimeViews'
 
@@ -32,7 +32,7 @@ function savedView(): CalendarView {
   return 'month'
 }
 
-type EditorState = { kind: 'new'; draft: EventDraft } | { kind: 'edit'; event: CalendarEvent }
+type EditorState = { kind: 'new'; draft: EventDraft } | { kind: 'edit'; event: Occurrence }
 
 /** A sensible default for a new event on `date` (optionally at a given minute of the day). */
 function newDraft(date: Date, atMinutes?: number): EventDraft {
@@ -48,6 +48,8 @@ function newDraft(date: Date, atMinutes?: number): EventDraft {
     startTime: fromMinutes(start),
     endTime: fromMinutes(start + 60),
     notes: '',
+    color: DEFAULT_EVENT_COLOR,
+    recurrence: null,
   }
 }
 
@@ -93,7 +95,7 @@ export default function CalendarTab() {
       : fmt(view === 'week' ? startOfWeek(date, WEEK_OPTS) : date, 'MMMM yyyy')
 
   const openNew = (on: Date = date, atMinutes?: number) => setEditor({ kind: 'new', draft: newDraft(on, atMinutes) })
-  const openEvent = (event: CalendarEvent) => setEditor({ kind: 'edit', event })
+  const openEvent = (event: Occurrence) => setEditor({ kind: 'edit', event })
   const prevLabel = `Previous ${view}`
   const nextLabel = `Next ${view}`
 
@@ -158,7 +160,7 @@ export default function CalendarTab() {
 
       {editor && (
         <EventEditor
-          key={editor.kind === 'edit' ? editor.event.id : 'new'}
+          key={editor.kind === 'edit' ? editor.event.key : 'new'}
           event={editor.kind === 'edit' ? editor.event : undefined}
           initial={editor.kind === 'new' ? editor.draft : undefined}
           onClose={() => setEditor(null)}

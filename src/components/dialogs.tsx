@@ -20,13 +20,21 @@ interface PromptOptions {
   placeholder?: string
   confirmLabel?: string
 }
+interface ChooseOptions<T extends string> {
+  title: string
+  message?: string
+  options: { label: string; value: T; destructive?: boolean }[]
+}
 interface DialogApi {
+  /** Several stacked choices plus Cancel. Resolves to the chosen value, or null. */
+  choose: <T extends string>(o: ChooseOptions<T>) => Promise<T | null>
   confirm: (o: ConfirmOptions) => Promise<boolean>
   prompt: (o: PromptOptions) => Promise<string | null>
   alert: (o: { title: string; message?: string }) => Promise<void>
 }
 
 type Pending =
+  | { kind: 'choose'; options: ChooseOptions<string>; resolve: (v: string | null) => void }
   | { kind: 'confirm'; options: ConfirmOptions; resolve: (v: boolean) => void }
   | { kind: 'prompt'; options: PromptOptions; resolve: (v: string | null) => void }
   | { kind: 'alert'; options: { title: string; message?: string }; resolve: () => void }
@@ -43,6 +51,13 @@ export function DialogProvider({ children }: { children: ReactNode }) {
   const [pending, setPending] = useState<Pending | null>(null)
 
   const api: DialogApi = {
+    choose: useCallback(
+      <T extends string>(options: ChooseOptions<T>) =>
+        new Promise<T | null>((resolve) =>
+          setPending({ kind: 'choose', options, resolve: resolve as (v: string | null) => void }),
+        ),
+      [],
+    ),
     confirm: useCallback((options) => new Promise((resolve) => setPending({ kind: 'confirm', options, resolve })), []),
     prompt: useCallback((options) => new Promise((resolve) => setPending({ kind: 'prompt', options, resolve })), []),
     alert: useCallback((options) => new Promise((resolve) => setPending({ kind: 'alert', options, resolve })), []),
@@ -68,12 +83,14 @@ function DialogView({ pending, onDone }: { pending: Pending; onDone: () => void 
   }, [pending.kind])
 
   const cancel = () => {
-    if (pending.kind === 'confirm') pending.resolve(false)
+    if (pending.kind === 'choose') pending.resolve(null)
+    else if (pending.kind === 'confirm') pending.resolve(false)
     else if (pending.kind === 'prompt') pending.resolve(null)
     else pending.resolve()
     onDone()
   }
   const accept = () => {
+    if (pending.kind === 'choose') return
     if (pending.kind === 'confirm') pending.resolve(true)
     else if (pending.kind === 'prompt') pending.resolve(value)
     else pending.resolve()
@@ -116,6 +133,26 @@ function DialogView({ pending, onDone }: { pending: Pending; onDone: () => void 
             </form>
           )}
         </div>
+        {pending.kind === 'choose' ? (
+          <div className="dialog-actions stacked">
+            {pending.options.options.map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                className={opt.destructive ? 'destructive' : undefined}
+                onClick={() => {
+                  pending.resolve(opt.value)
+                  onDone()
+                }}
+              >
+                {opt.label}
+              </button>
+            ))}
+            <button type="button" className="primary" onClick={cancel}>
+              Cancel
+            </button>
+          </div>
+        ) : (
         <div className={'dialog-actions' + (pending.kind === 'alert' ? ' single' : '')}>
           {pending.kind !== 'alert' && (
             <button type="button" onClick={cancel}>
@@ -126,6 +163,7 @@ function DialogView({ pending, onDone }: { pending: Pending; onDone: () => void 
             {confirmLabel}
           </button>
         </div>
+        )}
       </div>
     </div>
   )

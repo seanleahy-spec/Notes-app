@@ -20,10 +20,20 @@ export interface Note {
   updatedAt: number
 }
 
+/**
+ * How an event repeats.
+ *  - weekly: on the given weekdays (0 = Sunday … 6 = Saturday, like Date.getDay),
+ *    from the event's date until `until` (inclusive) or forever.
+ *  - dates:  on exactly these dates ('yyyy-MM-dd').
+ */
+export type Recurrence =
+  | { kind: 'weekly'; weekdays: number[]; until?: string | null }
+  | { kind: 'dates'; dates: string[] }
+
 export interface CalendarEvent {
   id: string
   title: string
-  /** Local calendar date, 'yyyy-MM-dd'. */
+  /** Local calendar date, 'yyyy-MM-dd'. For repeating events, the first date. */
   date: string
   allDay: boolean
   /** 'HH:mm' (24h). Ignored when allDay. */
@@ -31,6 +41,13 @@ export interface CalendarEvent {
   /** 'HH:mm' (24h), after startTime. Ignored when allDay. */
   endTime: string
   notes: string
+  /** Colour id from EVENT_COLORS (features/calendar/colors.ts). Missing = red. */
+  color?: string
+  recurrence?: Recurrence | null
+  /** 1 when `recurrence` is set (indexed so repeating events can be found quickly). */
+  repeats?: 0 | 1
+  /** Dates removed from a repeating series ("delete this event only"). */
+  exceptions?: string[]
   createdAt: number
   updatedAt: number
 }
@@ -46,6 +63,9 @@ class AppDatabase extends Dexie {
     })
     this.version(2).stores({
       events: 'id, date',
+    })
+    this.version(3).stores({
+      events: 'id, date, repeats',
     })
   }
 }
