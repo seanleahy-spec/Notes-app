@@ -27,9 +27,11 @@ async function occurrencesBetween(startKey: string, endKey: string): Promise<Occ
     db.events
       .where('date')
       .between(startKey, endKey, true, true)
-      .filter((e) => !e.repeats)
+      .filter((e) => !e.recurrence)
       .toArray(),
-    db.events.where('repeats').equals(1).toArray(),
+    // Repeating events: found by their recurrence rule rather than an index, so they
+    // always show up even if an index was never built on this device.
+    db.events.filter((e) => !!e.recurrence).toArray(),
   ])
   return sortEvents([
     ...single.map((e) => ({ ...e, key: e.id, repeating: false, seriesStart: e.date })),

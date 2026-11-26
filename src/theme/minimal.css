@@ -29,16 +29,16 @@
 
 @media (prefers-color-scheme: dark) {
   .theme-minimal {
-    --bg: #2e2e2e;
-    --surface: #2e2e2e;
-    --surface-2: #363636;
+    --bg: #000000;
+    --surface: #000000;
+    --surface-2: #111111;
     --text: #ecebe8;
     --text-2: rgba(236, 235, 232, 0.55);
     --text-3: rgba(236, 235, 232, 0.26);
-    --separator: rgba(236, 235, 232, 0.22);
+    --separator: rgba(236, 235, 232, 0.2);
     --fill: rgba(236, 235, 232, 0.07);
     --fill-strong: rgba(236, 235, 232, 0.14);
-    --bar-bg: #2e2e2e;
+    --bar-bg: #000000;
     --accent: #ecebe8;
     --min-strong: #ecebe8;
     color-scheme: dark;

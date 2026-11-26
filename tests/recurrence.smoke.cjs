@@ -116,6 +116,27 @@ const NOW = new Date('2026-11-26T10:30:00') // Thursday
   assert.ok(!(await eventsOn('2026-12-22')).includes('Holiday'))
   assert.ok((await eventsOn('2026-12-31')).includes('Holiday'))
 
+  // --- Regression: dates picked in From/To are saved even without tapping "Add Date"
+  await newEvent('Camp')
+  await page.getByLabel('Repeat', { exact: true }).selectOption('dates')
+  await page.locator('#ev-from').fill('2027-01-11')
+  await page.locator('#ev-to').fill('2027-01-13')
+  await page.getByText('On 4 dates').waitFor() // today + 3 picked days
+  await add()
+  for (const d of ['2027-01-11', '2027-01-12', '2027-01-13']) assert.ok((await eventsOn(d)).includes('Camp'), d)
+
+  // --- Regression: a repeating event with no index entry still shows every week
+  await page.evaluate(() => new Promise((res) => {
+    const r = indexedDB.open('my-productivity')
+    r.onsuccess = () => {
+      const tx = r.result.transaction('events', 'readwrite')
+      tx.objectStore('events').put({ id: 'legacy', title: 'Choir', date: '2027-02-01', allDay: false, startTime: '16:00', endTime: '17:00',
+        notes: '', color: 'purple', recurrence: { kind: 'weekly', weekdays: [1], until: null }, exceptions: [], createdAt: 1, updatedAt: 1 })
+      tx.oncomplete = () => { r.result.close(); res() }
+    }
+  }))
+  assert.ok((await eventsOn('2027-02-15')).includes('Choir'))
+
   // --- Month view shows coloured dots and the repeat icon
   await page.goto(URL + '#/calendar?view=month&date=2026-12-02')
   await page.locator('.event-row', { hasText: 'Swim' }).waitFor()
@@ -182,7 +203,7 @@ const NOW = new Date('2026-11-26T10:30:00') // Thursday
 
   // --- Persistence
   await page.reload()
-  assert.deepEqual(await eventsOn('2027-03-01'), ['Swim'])
+  assert.ok((await eventsOn('2027-03-01')).includes('Swim'))
 
   // Week view with several colours
   await newEvent('Party')

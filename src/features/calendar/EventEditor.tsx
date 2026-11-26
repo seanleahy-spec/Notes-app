@@ -34,6 +34,16 @@ type RepeatKind = 'never' | 'weekly' | 'dates'
 
 const MAX_RANGE_DAYS = 366
 
+/** Adds every date from `from` to `to` (or just `from`) to a sorted, de-duplicated list. */
+function mergeDates(dates: string[], from: string, to: string): string[] {
+  let start = fromKey(from)
+  let end = fromKey(to || from)
+  if (end < start) [start, end] = [end, start]
+  const count = Math.min(differenceInCalendarDays(end, start) + 1, MAX_RANGE_DAYS)
+  const added = Array.from({ length: count }, (_, i) => toKey(addDays(start, i)))
+  return [...new Set([...dates, ...added])].sort()
+}
+
 /** Groups sorted 'yyyy-MM-dd' dates into runs of consecutive days. */
 function toRuns(dates: string[]): { start: string; end: string; dates: string[] }[] {
   const runs: { start: string; end: string; dates: string[] }[] = []
@@ -84,7 +94,6 @@ export function EventEditor({
   const [rangeFrom, setRangeFrom] = useState('')
   const [rangeTo, setRangeTo] = useState('')
   const [saving, setSaving] = useState(false)
-  const error = isValidDraft(draft)
   const set = (patch: Partial<EventDraft>) => setDraft((d) => ({ ...d, ...patch }))
   const r = draft.recurrence
   const repeatKind: RepeatKind = r?.kind ?? 'never'
@@ -113,15 +122,16 @@ export function EventEditor({
   /** Adds one date, or every date from `rangeFrom` to `rangeTo`. */
   const addDates = () => {
     if (r?.kind !== 'dates' || !rangeFrom) return
-    let start = fromKey(rangeFrom)
-    let end = fromKey(rangeTo || rangeFrom)
-    if (end < start) [start, end] = [end, start]
-    const count = Math.min(differenceInCalendarDays(end, start) + 1, MAX_RANGE_DAYS)
-    const added = Array.from({ length: count }, (_, i) => toKey(addDays(start, i)))
-    setRecurrence({ kind: 'dates', dates: [...new Set([...r.dates, ...added])].sort() })
+    setRecurrence({ kind: 'dates', dates: mergeDates(r.dates, rangeFrom, rangeTo) })
     setRangeFrom('')
     setRangeTo('')
   }
+
+  // Dates picked in From/To count even if "Add Date" wasn't tapped before saving.
+  const effective: EventDraft =
+    r?.kind === 'dates' && rangeFrom
+      ? { ...draft, recurrence: { kind: 'dates', dates: mergeDates(r.dates, rangeFrom, rangeTo) } }
+      : draft
 
   const removeDates = (dates: string[]) => {
     if (r?.kind !== 'dates') return
@@ -129,7 +139,10 @@ export function EventEditor({
     setRecurrence({ kind: 'dates', dates: r.dates.filter((d) => !drop.has(d)) })
   }
 
+  const error = isValidDraft(effective)
+
   const save = async () => {
+    const draft = effective
     if (error || saving) return
     if (!event) {
       setSaving(true)
@@ -380,7 +393,7 @@ export function EventEditor({
             </>
           )}
         </ul>
-        {r && !error && <p className="list-section-footer">{describeRecurrence(r)}</p>}
+        {r && !error && <p className="list-section-footer">{describeRecurrence(effective.recurrence)}</p>}
         {error && (
           <p className="form-error" role="alert">
             {error}
