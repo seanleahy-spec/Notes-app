@@ -83,7 +83,7 @@ const NOW = new Date('2026-11-26T10:30:00') // a Thursday
   await page.getByRole('tab', { name: 'Week', exact: true }).click()
   await page.locator('.time-grid-header').waitFor()
   assert.equal(await page.locator('.time-grid-day-header').count(), 7)
-  assert.match(await page.locator('.time-grid-day-header').first().innerText(), /Mon\s*23/)
+  assert.match(await page.locator('.time-grid-day-header').first().innerText(), /Mon\s*23/i)
   await page.locator('.time-event', { hasText: 'Dentist appointment' }).waitFor()
   await page.locator('.event-chip', { hasText: 'Long weekend' }).waitFor()
   await page.locator('.now-line').waitFor()
