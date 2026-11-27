@@ -6,6 +6,11 @@ const assert = require('assert')
 const URL = process.env.APP_URL || 'http://localhost:4173/'
 const shots = process.argv[2]
 const snap = async (page, name) => shots && page.screenshot({ path: `${shots}/${name}.png` })
+// "+" opens the type picker; choose the plain rich-text Note.
+const newNote = async (page) => {
+  await page.getByRole('button', { name: 'New note' }).click()
+  await page.getByRole('button', { name: /^Note Text with/ }).click()
+}
 
 ;(async () => {
   const browser = await chromium.launch()
@@ -17,12 +22,12 @@ const snap = async (page, name) => shots && page.screenshot({ path: `${shots}/${
   page.on('pageerror', (e) => errors.push(e.message))
   await page.goto(URL + '#/notes')
   await page.getByRole('heading', { name: 'Notes' }).waitFor()
-  assert.equal(await page.locator('.tab-bar-item').allInnerTexts().then((t) => t.join(',')), 'Calendar,Whiteboards,Notes')
+  assert.equal(await page.locator('.tab-bar-item').evaluateAll((els) => els.map((e) => e.textContent).join(',')), 'Calendar,Whiteboards,Notes')
   await page.getByText('No Notes').waitFor()
   await snap(page, '01-iphone-empty')
 
   // Create a note with title + formatted body
-  await page.getByRole('button', { name: 'New note' }).click()
+  await newNote(page)
   const title = page.getByLabel('Note title')
   await title.waitFor()
   assert.equal(await page.locator('.tab-bar').count(), 0, 'tab bar hidden in editor')
@@ -56,7 +61,7 @@ const snap = async (page, name) => shots && page.screenshot({ path: `${shots}/${
   await page.keyboard.press('Enter')
   await page.keyboard.type('Second')
   await body.locator('ul[data-type="taskList"] > li input').first().check()
-  assert.equal(await body.locator('h2').innerText(), 'Groceries')
+  assert.equal(await body.locator('h2').textContent(), 'Groceries')
   assert.equal(await body.locator('ul[data-type="taskList"] > li').count(), 2)
   assert.equal(await body.locator('strong').innerText().then((t) => t.trim()), 'Bold text')
   assert.equal(await body.locator('em').innerText(), 'italic text')
@@ -70,16 +75,16 @@ const snap = async (page, name) => shots && page.screenshot({ path: `${shots}/${
   assert.equal(await page.locator('.note-row-title').first().innerText(), 'Shopping list')
 
   // Second note (title derived from first line), then an abandoned empty note
-  await page.getByRole('button', { name: 'New note' }).click()
+  await newNote(page)
   await page.getByLabel('Note title').press('Enter')
   await page.keyboard.type('Meeting ideas\nTalk about budget')
   await page.getByRole('button', { name: 'Notes' }).click()
-  await page.getByRole('button', { name: 'New note' }).click()
+  await newNote(page)
   await page.getByLabel('Note title').waitFor()
   await page.getByRole('button', { name: 'Notes' }).click()
   await page.waitForTimeout(300)
   assert.deepEqual(await page.locator('.note-row-title').allInnerTexts(), ['Meeting ideas', 'Shopping list'])
-  assert.equal(await page.locator('.bottom-toolbar-label').innerText(), '2 Notes')
+  assert.equal(await page.locator('.notes-count').textContent(), '2 notes')
   await snap(page, '03-iphone-list')
 
   // Search
@@ -115,7 +120,7 @@ const snap = async (page, name) => shots && page.screenshot({ path: `${shots}/${
   assert.deepEqual(await page.locator('.note-row-title').allInnerTexts(), ['Team meeting'])
 
   // Edit order: editing the older note moves it to the top
-  await page.getByRole('button', { name: 'New note' }).click()
+  await newNote(page)
   await page.getByLabel('Note title').fill('Newest')
   await page.getByRole('button', { name: 'Notes' }).click()
   await page.locator('.note-row', { hasText: 'Team meeting' }).click()
@@ -154,7 +159,7 @@ const snap = async (page, name) => shots && page.screenshot({ path: `${shots}/${
   const p2 = await ipad.newPage()
   await p2.goto(URL + '#/notes')
   await p2.getByText('No note selected').waitFor()
-  await p2.getByRole('button', { name: 'New note' }).click()
+  await newNote(p2)
   await p2.getByLabel('Note title').fill('iPad note')
   await p2.getByLabel('Note title').press('Enter')
   await p2.getByRole('button', { name: 'Checklist' }).click()

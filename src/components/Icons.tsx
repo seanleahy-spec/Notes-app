@@ -229,3 +229,64 @@ export const FitIcon = (p: IconProps) => (
     <path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5" />
   </Svg>
 )
+
+// ---------- Note types ----------
+export const TableIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <rect x="3.5" y="4.5" width="17" height="15" rx="1.5" />
+    <path d="M3.5 9.5h17M3.5 14.5h17M9.5 4.5v15M15 4.5v15" />
+  </Svg>
+)
+
+export const MoneyIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="12" cy="12" r="8.5" />
+    <path d="M14.8 9.2c-.5-1-1.6-1.6-2.8-1.6-1.6 0-2.8.9-2.8 2.1 0 2.9 5.8 1.5 5.8 4.4 0 1.3-1.3 2.2-3 2.2-1.3 0-2.5-.6-3-1.7M12 6v1.6M12 16.3V18" />
+  </Svg>
+)
+
+export const ScoreIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M7 4.5h10v4a5 5 0 0 1-10 0z" />
+    <path d="M7 6.5H4.5a3 3 0 0 0 3 3.5M17 6.5h2.5a3 3 0 0 1-3 3.5M12 13.5v3M8.5 19.5h7M10 16.5h4" />
+  </Svg>
+)
+
+export const MailIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <rect x="3.5" y="5.5" width="17" height="13" rx="1.5" />
+    <path d="m4 6.5 8 6 8-6" />
+  </Svg>
+)
+
+export const PlanIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M9 6h11M9 12h11M9 18h11" />
+    <path d="M4 5.5 5 6.5 6.8 4.5M4 11.5l1 1 1.8-2" />
+    <circle cx="5" cy="18" r="1.4" />
+  </Svg>
+)
+
+export const ChevronDownIcon = (p: IconProps) => (
+  <Svg strokeWidth={1.6} {...p}>
+    <path d="m6 9 6 6 6-6" />
+  </Svg>
+)
+
+export const ArrowUpIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M12 19V5M6 11l6-6 6 6" />
+  </Svg>
+)
+
+export const ArrowDownIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M12 5v14M6 13l6 6 6-6" />
+  </Svg>
+)
+
+export const StarIcon = ({ filled, ...p }: IconProps & { filled?: boolean }) => (
+  <Svg {...p} fill={filled ? 'currentColor' : 'none'}>
+    <path d="m12 3.8 2.5 5.1 5.6.8-4 3.9.9 5.6-5-2.6-5 2.6.9-5.6-4-3.9 5.6-.8z" />
+  </Svg>
+)

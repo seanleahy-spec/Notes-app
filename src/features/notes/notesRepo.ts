@@ -1,15 +1,18 @@
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db, newId, type Note } from '../../db/db'
+import { kindOf } from './kinds/registry'
+import type { NoteType } from './kinds/types'
 
 /** All notes, most recently edited first. `undefined` while loading. */
 export function useNotes(): Note[] | undefined {
   return useLiveQuery(() => db.notes.orderBy('updatedAt').reverse().toArray(), [])
 }
 
-export async function createNote(): Promise<string> {
+export async function createNote(type: NoteType = 'note'): Promise<string> {
   const now = Date.now()
   const id = newId()
-  await db.notes.add({ id, title: '', content: null, text: '', createdAt: now, updatedAt: now })
+  const data = type === 'note' ? undefined : kindOf(type).initial()
+  await db.notes.add({ id, title: '', content: null, text: '', type, data, createdAt: now, updatedAt: now })
   return id
 }
 
@@ -17,7 +20,7 @@ export function getNote(id: string): Promise<Note | undefined> {
   return db.notes.get(id)
 }
 
-export async function updateNote(id: string, patch: Partial<Pick<Note, 'title' | 'content' | 'text'>>) {
+export async function updateNote(id: string, patch: Partial<Pick<Note, 'title' | 'content' | 'text' | 'data'>>) {
   await db.notes.update(id, { ...patch, updatedAt: Date.now() })
 }
 
@@ -46,14 +49,16 @@ function nonEmptyLines(text: string): string[] {
     .filter(Boolean)
 }
 
-export function noteTitle(note: Pick<Note, 'title' | 'text'>): string {
-  return note.title.trim() || nonEmptyLines(note.text)[0] || 'New Note'
+export function noteTitle(note: Pick<Note, 'title' | 'text'> & { type?: NoteType }): string {
+  const fallback = !note.type || note.type === 'note' ? nonEmptyLines(note.text)[0] : undefined
+  return note.title.trim() || fallback || `New ${kindOf(note.type).label}`
 }
 
-export function notePreview(note: Pick<Note, 'title' | 'text'>): string {
+export function notePreview(note: Pick<Note, 'title' | 'text'> & { type?: NoteType }): string {
   const lines = nonEmptyLines(note.text)
-  const line = note.title.trim() ? lines[0] : lines[1]
-  return line || 'No additional text'
+  const typed = note.type && note.type !== 'note'
+  const line = note.title.trim() || typed ? lines[0] : lines[1]
+  return line || (typed ? 'Empty' : 'No additional text')
 }
 
 export function noteMatches(note: Pick<Note, 'title' | 'text'>, query: string): boolean {

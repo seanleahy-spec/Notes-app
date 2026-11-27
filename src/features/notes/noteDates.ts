@@ -24,5 +24,5 @@ export function groupLabel(ts: number, now = Date.now()): string {
 
 /** Full timestamp shown at the top of an open note. */
 export function editorDate(ts: number): string {
-  return `${fmt(ts, 'd MMMM yyyy')} at ${fmt(ts, 'h:mm a').toLowerCase()}`
+  return `${fmt(ts, 'd MMMM yyyy')} · ${fmt(ts, 'h:mm a').toLowerCase()}`
 }

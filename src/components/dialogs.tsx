@@ -111,7 +111,7 @@ function DialogView({ pending, onDone }: { pending: Pending; onDone: () => void 
     pending.kind === 'alert' ? 'OK' : (pending.options as ConfirmOptions).confirmLabel ?? 'OK'
 
   return (
-    <div className="dialog-backdrop" onClick={cancel}>
+    <div className="dialog-backdrop theme-minimal" onClick={cancel}>
       <div className="dialog" role="alertdialog" aria-modal="true" aria-label={o.title} onClick={(e) => e.stopPropagation()}>
         <div className="dialog-body">
           <h2>{o.title}</h2>

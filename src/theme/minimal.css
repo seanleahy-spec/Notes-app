@@ -51,3 +51,326 @@
 .theme-minimal textarea {
   font-family: var(--min-font);
 }
+
+/* ---------- Shared minimal components (nav bar, buttons, sheets, forms) ---------- *//*
+ * Calendar: minimal planner style. Colours/typeface come from .theme-minimal
+ * (src/theme/minimal.css); this file only shapes the calendar's layout.
+ */
+
+.theme-minimal button,
+.theme-minimal input,
+.theme-minimal select,
+.theme-minimal textarea {
+  font-family: var(--min-font);
+}
+
+/* Shared "label" typography: small, uppercase, widely spaced */
+.theme-minimal .text-button,
+.theme-minimal .segmented button,
+.theme-minimal .month-weekdays,
+.theme-minimal .week-strip-letter,
+.theme-minimal .day-event-list-header,
+.theme-minimal .day-event-list-empty,
+.theme-minimal .sheet-header .nav-bar-title,
+.theme-minimal .time-grid-allday .time-gutter {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-weight: 400;
+}
+
+/* ---------- Top bar ---------- */
+.theme-minimal .nav-bar {
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+.theme-minimal .text-button {
+  font-size: 11px;
+  color: var(--text);
+}
+
+.theme-minimal .icon-button {
+  color: var(--text);
+}
+
+.theme-minimal .icon-button svg {
+  stroke-width: 1.2;
+}
+
+.theme-minimal .segmented {
+  background: none;
+  padding: 0;
+  gap: 20px;
+}
+
+.theme-minimal .segmented button,
+.theme-minimal .segmented button.selected {
+  min-width: 0;
+  height: 26px;
+  padding: 0 1px;
+  border-radius: 0;
+  font-size: 11px;
+  color: var(--text-2);
+  background: none;
+  box-shadow: none;
+}
+
+.theme-minimal .segmented button.selected {
+  color: var(--text);
+  box-shadow: inset 0 -1px 0 currentColor;
+}
+
+/* ---------- Event form (sheet) ---------- */
+.theme-minimal .sheet {
+  background: var(--bg);
+  border-radius: 10px 10px 0 0;
+}
+
+@media (min-width: 768px) {
+  .theme-minimal .sheet {
+    border-radius: 6px;
+  }
+}
+
+.theme-minimal .sheet-header {
+  border-bottom: 0.5px solid var(--separator);
+}
+
+.theme-minimal .sheet-header .nav-bar-title {
+  font-size: 12px;
+}
+
+.theme-minimal .event-form .grouped-list {
+  background: none;
+  border-radius: 0;
+  border-top: 0.5px solid var(--separator);
+  border-bottom: 0.5px solid var(--separator);
+  margin-top: 22px;
+}
+
+.theme-minimal .grouped-list > li + li::before {
+  left: 0;
+}
+
+.theme-minimal .form-input,
+.theme-minimal .form-row {
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+.theme-minimal .form-pill {
+  background: var(--fill);
+  border-radius: 2px;
+  font-size: 15px;
+  font-weight: 400;
+}
+
+.theme-minimal .form-select {
+  color: var(--text);
+}
+
+.theme-minimal .list-section-footer,
+.theme-minimal .form-error {
+  margin-left: 2px;
+}
+
+.theme-minimal .list-button.destructive {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.theme-minimal .weekday-toggle {
+  border-radius: 50%;
+  font-weight: 400;
+  font-size: 13px;
+  background: none;
+  box-shadow: inset 0 0 0 1px var(--separator);
+}
+
+.theme-minimal .weekday-toggle.on {
+  background: var(--text);
+  color: var(--bg);
+  box-shadow: none;
+}
+
+.theme-minimal .switch input:checked + span {
+  background: var(--text);
+}
+
+.theme-minimal .switch input:checked + span::after {
+  background: var(--bg);
+}
+
+.theme-minimal .color-swatch {
+  width: 22px;
+  height: 22px;
+}
+
+.theme-minimal .color-swatch.selected {
+  box-shadow:
+    0 0 0 2px var(--bg),
+    0 0 0 3px var(--text);
+}
+
+/* ---------- App-wide: tab bar, back button, dialogs, menus, settings ---------- */
+.tab-bar.theme-minimal {
+  background: var(--bg);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-top: 0.5px solid var(--separator);
+  padding: 0 0 max(var(--safe-bottom), 8px);
+}
+
+.tab-bar.theme-minimal .tab-bar-item {
+  flex: 1;
+  max-width: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.tab-bar.theme-minimal .tab-bar-item span {
+  padding: 4px 0;
+}
+
+.tab-bar.theme-minimal .tab-bar-item.active {
+  color: var(--text);
+}
+
+.tab-bar.theme-minimal .tab-bar-item.active span {
+  box-shadow: inset 0 -1px 0 currentColor;
+}
+
+.theme-minimal .back-button {
+  color: var(--text);
+  gap: 4px;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.theme-minimal .text-button.bold {
+  font-weight: 500;
+}
+
+.theme-minimal .action-menu-popover {
+  background: var(--surface-2);
+  border: 0.5px solid var(--separator);
+  border-radius: 6px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.theme-minimal .action-menu-popover button {
+  font-size: 15px;
+}
+
+.theme-minimal .action-menu-popover button + button {
+  border-top-color: var(--separator);
+}
+
+.dialog-backdrop.theme-minimal {
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.theme-minimal .dialog {
+  background: var(--surface-2);
+  border: 0.5px solid var(--separator);
+  border-radius: 8px;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  color: var(--text);
+}
+
+.theme-minimal .dialog h2 {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  line-height: 1.5;
+}
+
+.theme-minimal .dialog p {
+  color: var(--text-2);
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.theme-minimal .dialog-input {
+  background: var(--bg);
+  border: 0.5px solid var(--separator);
+  border-radius: 2px;
+  color: var(--text);
+}
+
+.theme-minimal .dialog-actions {
+  border-top-color: var(--separator);
+}
+
+.theme-minimal .dialog-actions button {
+  color: var(--text);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 400;
+}
+
+.theme-minimal .dialog-actions button + button {
+  border-color: var(--separator);
+}
+
+.theme-minimal .dialog-actions .primary {
+  font-weight: 500;
+}
+
+.theme-minimal .dialog-actions .destructive {
+  color: var(--red);
+  font-weight: 500;
+}
+
+.settings-page.theme-minimal .grouped-list {
+  background: none;
+  border-radius: 0;
+  border-top: 0.5px solid var(--separator);
+  border-bottom: 0.5px solid var(--separator);
+}
+
+.settings-page.theme-minimal .list-section-header {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  margin-left: 0;
+}
+
+.settings-page.theme-minimal .list-section-footer {
+  margin-left: 0;
+}
+
+.settings-page.theme-minimal .list-button {
+  color: var(--text);
+  padding-left: 0;
+}
+
+.settings-page.theme-minimal .list-value-row {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.settings-page.theme-minimal .page-scroll {
+  padding: 0 20px 24px;
+}
+
+.settings-page.theme-minimal .nav-bar-title {
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}

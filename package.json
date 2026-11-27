@@ -11,6 +11,7 @@
     "test:notes": "node tests/notes.smoke.cjs",
     "test:calendar": "node tests/calendar.smoke.cjs && node tests/recurrence.smoke.cjs",
     "test:whiteboards": "node tests/whiteboards.smoke.cjs",
+    "test:notetypes": "node tests/notetypes.smoke.cjs",
     "icons": "node scripts/make-icons.cjs"
   },
   "dependencies": {

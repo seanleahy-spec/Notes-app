@@ -50,11 +50,11 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="page settings-page">
+    <div className="page settings-page theme-minimal">
       <NavBar
         left={
           <button type="button" className="back-button" onClick={goBack}>
-            <ChevronLeftIcon size={22} />
+            <ChevronLeftIcon size={18} />
             <span>Back</span>
           </button>
         }

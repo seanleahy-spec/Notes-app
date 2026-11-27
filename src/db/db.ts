@@ -1,4 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie'
+import type { NoteType } from '../features/notes/kinds/types'
 import type { SavedViewport, WbElement } from '../features/whiteboards/types'
 
 /**
@@ -17,6 +18,10 @@ export interface Note {
   content: unknown
   /** Plain-text copy of the body, used for search and list previews. */
   text: string
+  /** Kind of note (missing = "note", the rich-text kind). */
+  type?: NoteType
+  /** Structured content for non-text kinds (table rows, money accounts, …). */
+  data?: unknown
   createdAt: number
   updatedAt: number
 }

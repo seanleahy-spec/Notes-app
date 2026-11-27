@@ -34,17 +34,17 @@ function NotesScreen() {
   ) : null
 
   if (!wide) {
-    return editor ?? <NotesList />
+    return <div className="theme-minimal notes-root">{editor ?? <NotesList />}</div>
   }
 
   return (
-    <div className="notes-split">
+    <div className="theme-minimal notes-root notes-split">
       <div className="notes-split-list">
         <NotesList selectedId={noteId} />
       </div>
       <div className="notes-split-detail">
         {editor ?? (
-          <div className="empty-state">
+          <div className="notes-empty">
             <p>No note selected</p>
           </div>
         )}
